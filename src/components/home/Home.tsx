@@ -23,7 +23,7 @@ const Home = () => {
                 <a href="/signin">sign in page</a><br />
                 <a href="/signup">sign up page</a>
                 <p>
-                    送信されたメールアドレスはDBに保存され、制作者が閲覧できる状態になります。<br />
+                    送信されたメールアドレスは保存され、制作者が閲覧できる状態になります。<br />
                     悪用するつもりはありませんが、ダミーのものを使用することを推奨します。<br />
                     例 : dummy001@example.com
                 </p>
