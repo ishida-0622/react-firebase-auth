@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createUserWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, User, AuthErrorCodes } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { Navigate } from "react-router-dom";
 
@@ -9,20 +9,28 @@ interface data {
     email: string,
     password: string
 }
+
 const initData: data = {
     email: "",
     password: ""
 }
+
 const SignUp = () => {
     const [data, setData] = useState(initData);
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        try {
-            await createUserWithEmailAndPassword(auth, data.email, data.password);
-        } catch (error) {
-            alert("Error");
-            console.log(error);
-        }
+        await createUserWithEmailAndPassword(auth, data.email, data.password).catch((e) => {
+            const errorCode = e.code;
+            if (errorCode === AuthErrorCodes.EMAIL_EXISTS) {
+                alert("そのメールアドレスは使用されています");
+            } else if (AuthErrorCodes.INVALID_EMAIL) {
+                alert("メールアドレスの形式が正しくありません");
+            } else if (AuthErrorCodes.WEAK_PASSWORD) {
+                alert("パスワードは6文字以上で入力してください");
+            } else {
+                alert(`Error\n${errorCode}`)
+            }
+        });
     };
     const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         const val = event.target.value;

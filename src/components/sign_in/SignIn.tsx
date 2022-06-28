@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, User, AuthErrorCodes } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 
@@ -9,20 +9,27 @@ interface data {
     email: string,
     password: string
 }
+
 const initData: data = {
     email: "",
     password: ""
 }
+
 const SignIn = () => {
     const [data, setData] = useState(initData);
+    const navigate = useNavigate();
     const login = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        try {
-            signInWithEmailAndPassword(auth, data.email, data.password);
-        } catch (error) {
-            alert("Error");
-            console.log(error);
-        }
+        await signInWithEmailAndPassword(auth, data.email, data.password).then(() => {
+            navigate("/mypage");
+        }).catch((e) => {
+            const errorCode = e.code;
+            if (errorCode === AuthErrorCodes.USER_DELETED || errorCode === AuthErrorCodes.INVALID_PASSWORD) {
+                alert("メールアドレスもしくはパスワードが間違っています");
+            } else {
+                alert(`Error\n${errorCode}`)
+            }
+        });
     }
     const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         const val = event.target.value;
