@@ -3,8 +3,6 @@ import { onAuthStateChanged, User, signOut, deleteUser } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
-
-
 const MyPage = () => {
     const [user, setUser] = useState<User | null>(null);
     useEffect(() => {
@@ -18,7 +16,7 @@ const MyPage = () => {
         await signOut(auth).then(() => {
             navigate("/");
         });
-    }
+    };
 
     const userDelete = async () => {
         if (!window.confirm("削除しますか？")) {
@@ -30,7 +28,7 @@ const MyPage = () => {
         }
         await deleteUser(user);
         navigate("/");
-    }
+    };
 
     return (
         <>
